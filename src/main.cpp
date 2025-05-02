@@ -10,4 +10,7 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() { create.box(10, 10, 100, 100); }
+void opcontrol() {
+  create.box(10, 10, 100, 100);
+  create.triangle(1, 1, 1, 1, 1, 1);
+}
