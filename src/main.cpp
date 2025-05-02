@@ -1,11 +1,10 @@
 #include "main.h"
-#include "lewis/create.hpp"
 #include "liblvgl/display/lv_display.h"
+#include "pros/drivetrain.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
 
-lewis::Drivetrain driver({12, 13}, v5::MotorGears::green,
-                         v5::MotorEncoderUnits::degrees);
+DrivetrainDualM drive(pros::Motor(1), pros::Motor(9));
 
 void initialize() { lvgl_init(); }
 
@@ -15,8 +14,4 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() {
-  create.box("name", 10, 10, 100, 100);
-  create.triangle("Name", 1, 1, 1, 1, 1, 1);
-  driver
-}
+void opcontrol() {}
