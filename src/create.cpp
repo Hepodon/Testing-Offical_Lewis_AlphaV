@@ -7,7 +7,6 @@
 #include <vector>
 
 void Creator::box(string box_Name, int x, int y, int width, int height) {
-  // Check for duplicate box name
   auto exists =
       std::find(shape_Box_Names.begin(), shape_Box_Names.end(), box_Name);
   if (exists != shape_Box_Names.end())
@@ -23,7 +22,7 @@ void Creator::box(string box_Name, int x, int y, int width, int height) {
 
 void Creator::triangle(string triangle_Name, int x1, int y1, int x2, int y2,
                        int x3, int y3) {
-  // Check for duplicate triangle name
+
   auto exists = std::find(shape_Triangle_Names.begin(),
                           shape_Triangle_Names.end(), triangle_Name);
   if (exists != shape_Triangle_Names.end())
