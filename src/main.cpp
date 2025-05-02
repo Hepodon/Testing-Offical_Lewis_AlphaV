@@ -6,7 +6,6 @@
 
 lewis::Drivetrain driver({12, 13}, v5::MotorGears::green,
                          v5::MotorEncoderUnits::degrees);
-pros::MotorGroup
 
 void initialize() { lvgl_init(); }
 
