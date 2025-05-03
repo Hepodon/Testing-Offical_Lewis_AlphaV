@@ -51,7 +51,7 @@ public:
   }
   void turn_For(uint8_t turnDegrees) {
 
-    float motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
+    int motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
 
     _left.move_relative(motorDegrees, _turnVelocity);
     _right.move_relative(-motorDegrees, _turnVelocity);
