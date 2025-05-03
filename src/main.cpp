@@ -4,7 +4,9 @@
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
 
-DrivetrainDualM drive(pros::Motor(1), pros::Motor(9));
+using namespace pros;
+
+DrivetrainDualM drivetrain(Motor(1), Motor(20), 1, 10, 4);
 
 void initialize() { lvgl_init(); }
 
@@ -14,4 +16,8 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() {}
+void opcontrol() {
+  drivetrain.drive(12);
+  drivetrain.turn(true, 90, 12);
+  drivetrain.stop();
+}
