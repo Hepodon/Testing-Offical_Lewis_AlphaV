@@ -1,3 +1,4 @@
+#include "math.h"
 #include "pros/motors.hpp"
 #include <cstdint>
 
@@ -8,16 +9,30 @@ private:
   int _gearratio;
   int _wheelbasewidth;
   int _wheeldiameter;
+  int _turnVelocity = 60;
+  int _driveVelocity = 60;
 
 public:
-  DrivetrainDualM(pros::Motor left, pros::Motor right, float gearratio,
-                  uint8_t wheelbasewidth, uint8_t wheeldiameter)
-      : _left(left), _right(right), _gearratio(gearratio),
-        _wheelbasewidth(wheelbasewidth), _wheeldiameter(wheeldiameter) {}
+  DrivetrainDualM(uint8_t leftPort, uint8_t rightPort, float gearRatio,
+                  uint8_t wheelbaseWidth, uint8_t wheelDiameter)
+      : _left(leftPort), _right(rightPort), _gearratio(gearRatio),
+        _wheelbasewidth(wheelbaseWidth), _wheeldiameter(wheelDiameter) {}
+
+  void set_Velocity_Drive(int velocity) { _driveVelocity = velocity; }
+
+  void set_Velocity_Turn(int velocity) { _turnVelocity = velocity; }
 
   void drive(int8_t speed) {
     _left.move(speed);
     _right.move(speed);
+  }
+
+  void drive_For(int8_t inches) {
+    float motorDegrees =
+        (360 * (inches / (_wheeldiameter * M_PI))) * _gearratio;
+
+    _left.move_relative(motorDegrees, _driveVelocity);
+    _left.move_relative(motorDegrees, _driveVelocity);
   }
 
   void stop() {
@@ -25,11 +40,21 @@ public:
     _right.move(0);
   }
 
-  void turn(bool right, uint8_t turnDegrees, int8_t velocity) {
-    int direction = right ? 1 : -1;
+  void turn(bool right) {
+    if (right) {
+      _left.move(_turnVelocity);
+      _right.move(-_turnVelocity);
+    } else {
+      _left.move(-_turnVelocity);
+      _right.move(_turnVelocity);
+    }
+  }
+
+  void turn_For(uint8_t turnDegrees) {
+
     int motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
 
-    _left.move_relative(direction * motorDegrees, velocity);
-    _right.move_relative(-direction * motorDegrees, velocity);
+    _left.move_relative(motorDegrees, _turnVelocity);
+    _right.move_relative(-motorDegrees, _turnVelocity);
   }
 };

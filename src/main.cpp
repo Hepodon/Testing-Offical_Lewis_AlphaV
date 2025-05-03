@@ -1,12 +1,9 @@
 #include "main.h"
-#include "liblvgl/display/lv_display.h"
 #include "pros/drivetrain.hpp"
-#include "pros/motor_group.hpp"
-#include "pros/motors.h"
 
 using namespace pros;
 
-DrivetrainDualM drivetrain(Motor(1), Motor(20), 1, 10, 4);
+DrivetrainDualM drivetrain(1, 2, 1, 10, 4);
 
 void initialize() { lvgl_init(); }
 
@@ -18,6 +15,10 @@ void autonomous() {}
 
 void opcontrol() {
   drivetrain.drive(12);
-  drivetrain.turn(true, 90, 12);
+  drivetrain.turn_For(90);
   drivetrain.stop();
+  drivetrain.drive_For(12);
+  drivetrain.turn(true);
+  drivetrain.set_Velocity_Drive(12);
+  drivetrain.set_Velocity_Turn(12);
 }
