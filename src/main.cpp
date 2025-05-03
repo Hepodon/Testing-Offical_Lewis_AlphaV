@@ -14,12 +14,5 @@ void competition_initialize() {}
 void autonomous() {}
 
 void opcontrol() {
-  drivetrain.drive(12);
-  drivetrain.turn_For(90);
-  drivetrain.stop();
-  drivetrain.drive_For(12);
-  drivetrain.turn_Right();
-  drivetrain.turn_Left();
-  drivetrain.set_Velocity_Drive(12);
-  drivetrain.set_Velocity_Turn(12);
+  drivetrain.turn_Sweep_For(100, 10, 2);
 }
