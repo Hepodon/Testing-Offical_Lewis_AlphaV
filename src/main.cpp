@@ -18,7 +18,8 @@ void opcontrol() {
   drivetrain.turn_For(90);
   drivetrain.stop();
   drivetrain.drive_For(12);
-  drivetrain.turn(true);
+  drivetrain.turn_Right();
+  drivetrain.turn_Left();
   drivetrain.set_Velocity_Drive(12);
   drivetrain.set_Velocity_Turn(12);
 }

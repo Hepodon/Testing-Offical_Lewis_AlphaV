@@ -40,16 +40,15 @@ public:
     _right.move(0);
   }
 
-  void turn(bool right) {
-    if (right) {
-      _left.move(_turnVelocity);
-      _right.move(-_turnVelocity);
-    } else {
-      _left.move(-_turnVelocity);
-      _right.move(_turnVelocity);
-    }
+  void turn_Right() {
+    _left.move(_turnVelocity);
+    _right.move(-_turnVelocity);
   }
 
+  void turn_Left() {
+    _left.move(-_turnVelocity);
+    _right.move(_turnVelocity);
+  }
   void turn_For(uint8_t turnDegrees) {
 
     int motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
