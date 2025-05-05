@@ -17,6 +17,11 @@ public:
       velocity = _driveVelocity;
     _drivetrain.drive(_driveVelocity);
   }
+  void drive_For(int inches, int velocity = 0) {
+    if (velocity == 0)
+      velocity = _driveVelocity;
+    _drivetrain.drive_For(inches, velocity);
+  }
 
 private:
   Drivetrain &_drivetrain;

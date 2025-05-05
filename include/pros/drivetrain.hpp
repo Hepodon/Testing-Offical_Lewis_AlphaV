@@ -27,7 +27,12 @@ public:
     _right.move(velocity);
   }
 
-  void drive_For(int inches) {
+  int get_wheelDiameter() { return _wheeldiameter; }
+  int get_gearRatio() { return _gearratio; }
+
+  void drive_For(int inches, int velocity = 0) {
+    if (velocity == 0)
+      velocity = _driveVelocity;
     float motorDegrees =
         (360 * (inches / (_wheeldiameter * M_PI))) * _gearratio;
 
@@ -75,7 +80,7 @@ public:
                     static_cast<float>(_gearratio);
     float rightDeg = (rightArc / wheelCircumference) * 360.0f *
                      static_cast<float>(_gearratio);
- 
+
     // Calculate speed ratio
     float leftSpeed, rightSpeed;
     if (leftArc > rightArc) {
