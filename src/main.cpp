@@ -2,8 +2,7 @@
 #include "pros/drivetrain.hpp"
 
 using namespace pros;
-
-DrivetrainDualM drivetrain(1, 2);
+Drivetrain Drivetrain({1}, {2});
 
 void initialize() { lvgl_init(); }
 
@@ -13,4 +12,4 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() { drivetrain.turn_Sweep_For(100, 10, 2); }
+void opcontrol() { Drivetrain.turn_Sweep_For(100, 10, 2); }
