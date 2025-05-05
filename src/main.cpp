@@ -2,7 +2,7 @@
 #include "pros/drivetrain.hpp"
 
 using namespace pros;
-Drivetrain Drivetrain({1}, {2});
+Drivetrain Drivetrain({20}, {19}, 1, 10, 4);
 
 void initialize() { lvgl_init(); }
 
@@ -12,4 +12,7 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() { Drivetrain.turn_Sweep_For(100, 10, 2); }
+void opcontrol() {
+  delay(1000);
+  Drivetrain.turn_Pivot_For(120);
+}

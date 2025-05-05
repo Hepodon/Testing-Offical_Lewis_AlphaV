@@ -1,4 +1,5 @@
 #include "math.h"
+#include "pros/abstract_motor.hpp"
 #include "pros/motor_group.hpp"
 #include <cstdint>
 
@@ -13,18 +14,20 @@ public:
         _wheeldiameter(wheelDiameter) {
     _left.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
     _right.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+    _left.set_encoder_units(pros::MotorEncoderUnits::degrees);
+    _right.set_encoder_units(pros::MotorEncoderUnits::degrees);
   }
 
   void set_Velocity_Drive(int velocity) { _driveVelocity = velocity; }
 
   void set_Velocity_Turn(int velocity) { _turnVelocity = velocity; }
 
-  void drive(int8_t velocity) {
+  void drive(int velocity) {
     _left.move(velocity);
     _right.move(velocity);
   }
 
-  void drive_For(int8_t inches) {
+  void drive_For(int inches) {
     float motorDegrees =
         (360 * (inches / (_wheeldiameter * M_PI))) * _gearratio;
 
@@ -46,12 +49,12 @@ public:
     _left.move(-_turnVelocity);
     _right.move(_turnVelocity);
   }
-  void turn_Pivot_For(int8_t turnDegrees) {
+  void turn_Pivot_For(int turnDegrees) {
 
     int motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
 
     _left.move_relative(motorDegrees, _turnVelocity);
-    _right.move_relative(-motorDegrees, _turnVelocity);
+    _right.move_relative(motorDegrees, -_turnVelocity);
   }
   void turn_Sweep_For(float turnDegrees, float vertical, float horizontal) {
     float theta = turnDegrees * (M_PI / 180.0);
@@ -72,7 +75,7 @@ public:
                     static_cast<float>(_gearratio);
     float rightDeg = (rightArc / wheelCircumference) * 360.0f *
                      static_cast<float>(_gearratio);
-
+ 
     // Calculate speed ratio
     float leftSpeed, rightSpeed;
     if (leftArc > rightArc) {
@@ -94,7 +97,7 @@ private:
   int _gearratio;
   int _wheelbasewidth;
   int _wheeldiameter;
-  int _turnVelocity = 60;
+  int _turnVelocity = 40;
   int _driveVelocity = 60;
   static pros::MotorGroup makeMotorGroup(const std::vector<int8_t> &ports) {
     return pros::MotorGroup({ports.begin(), ports.end()});
