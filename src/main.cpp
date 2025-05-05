@@ -3,7 +3,7 @@
 
 using namespace pros;
 
-DrivetrainDualM drivetrain(1, 2, 1, 10, 4);
+DrivetrainDualM drivetrain(1, 2);
 
 void initialize() { lvgl_init(); }
 
@@ -13,6 +13,4 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() {
-  drivetrain.turn_Sweep_For(100, 10, 2);
-}
+void opcontrol() { drivetrain.turn_Sweep_For(100, 10, 2); }
