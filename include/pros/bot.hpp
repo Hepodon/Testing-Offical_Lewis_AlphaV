@@ -46,15 +46,11 @@ public:
 
   void move_To_Horizontal_Pos(int x, bool waitForCompletion = true) {
     int deltax = x - _x;
-    if (deltax > _x) {
-      int deltaAngle = 90 - _angle;
-      turn_Pivot_For(deltaAngle, true);
-      // drive_For(deltax, 0, waitForCompletion);
-    } else {
-      int deltaAngle = -90 - _angle;
-      turn_Pivot_For(deltaAngle, true);
-      drive_For(deltax, _driveVelocity, waitForCompletion);
-    }
+    _x += deltax;
+    int deltaAngle = ((deltax > x) ? 90 : -90) - _angle;
+    turn_Pivot_For(deltaAngle, true);
+    pros::delay(150);
+    drive_For(((deltax > x) ? deltax : -deltax), 0, waitForCompletion);
   }
   void move_To_Vertical_Pos(int y, bool waitForCompletion = true) {
     int deltay = _y - y;
@@ -86,13 +82,6 @@ public:
     turn_To_Angle(angle, true);
     drive_For(distance, _driveVelocity, true);
   }
-  void test(int x) {
-    int deltax = x - _x;
-    int deltaAngle = 90 - _angle;
-    _drivetrain.turn_Pivot_For(deltaAngle);
-    pros::delay(10000);
-    _drivetrain.drive_For(deltax);
-  }
 
   bool isBusy() const { return _isBusy; }
 
@@ -104,8 +93,8 @@ private:
   int _y = 0;
   int _angle = 0;
   int _chainspeed = 100;
-  int _turnVelocity = 40;
-  int _driveVelocity = 60;
+  int _turnVelocity = 35;
+  int _driveVelocity = 55;
   bool _isBusy = false;
   pros::Task _monitorTask;
 

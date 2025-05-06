@@ -46,7 +46,7 @@ public:
     _rightStart = _right.get_position();
 
     _left.move_relative(motorDegrees, velocity);
-    _right.move_relative(motorDegrees, -velocity);
+    _right.move_relative(motorDegrees, velocity);
 
     if (waitForCompletion) {
       while (_isDriving)
@@ -80,49 +80,7 @@ public:
     _isTurning = true;
 
     _left.move_relative(motorDegrees, _turnVelocity);
-    _right.move_relative(motorDegrees, -_turnVelocity);
-
-    if (waitForCompletion) {
-      while (_isTurning)
-        pros::delay(10);
-    }
-  }
-
-  void turn_Sweep_For(float turnDegrees, float vertical, float horizontal,
-                      bool waitForCompletion = true) {
-    float theta = turnDegrees * (M_PI / 180.0);
-    if (theta == 0)
-      return;
-
-    float chord = sqrt(horizontal * horizontal + vertical * vertical);
-    float r = chord / (2.0f * sin(theta / 2.0f));
-
-    float leftRadius = r - (_wheelbasewidth / 2.0f);
-    float rightRadius = r + (_wheelbasewidth / 2.0f);
-
-    float leftArc = leftRadius * theta;
-    float rightArc = rightRadius * theta;
-
-    float wheelCircumference = M_PI * _wheeldiameter;
-    float leftDeg = (leftArc / wheelCircumference) * 360.0f * _gearratio;
-    float rightDeg = (rightArc / wheelCircumference) * 360.0f * _gearratio;
-
-    float leftSpeed, rightSpeed;
-    if (leftArc > rightArc) {
-      leftSpeed = _turnVelocity;
-      rightSpeed = _turnVelocity * (rightArc / leftArc);
-    } else {
-      rightSpeed = _turnVelocity;
-      leftSpeed = _turnVelocity * (leftArc / rightArc);
-    }
-
-    _leftStart = _left.get_position();
-    _rightStart = _right.get_position();
-    _driveTarget = std::max(std::abs(leftDeg), std::abs(rightDeg));
-    _isTurning = true;
-
-    _left.move_relative(leftDeg, leftSpeed);
-    _right.move_relative(rightDeg, rightSpeed);
+    _right.move_relative(-motorDegrees, -_turnVelocity);
 
     if (waitForCompletion) {
       while (_isTurning)
