@@ -30,9 +30,7 @@ public:
   void turn_Pivot_For(int angle, bool waitForCompletion = true) {
     _angle += angle;
     _isBusy = true;
-    _drivetrain.turn_Pivot_For(angle);
-    if (waitForCompletion)
-      waitUntilComplete();
+    _drivetrain.turn_Pivot_For(angle, true);
   }
 
   void turn_To_Angle(int angle, bool waitForCompletion = true) {
@@ -46,14 +44,13 @@ public:
     _angle = angle;
   }
 
-  void move_To_Vorizontal_Pos(int x, bool waitForCompletion = true) {
-    int deltax = _x - x;
+  void move_To_Horizontal_Pos(int x, bool waitForCompletion = true) {
+    int deltax = x - _x;
     if (deltax > _x) {
       int deltaAngle = 90 - _angle;
       turn_Pivot_For(deltaAngle, true);
-      drive_For(deltax, 0, waitForCompletion);
-    }
-    if (deltax < _x) {
+      // drive_For(deltax, 0, waitForCompletion);
+    } else {
       int deltaAngle = -90 - _angle;
       turn_Pivot_For(deltaAngle, true);
       drive_For(deltax, _driveVelocity, waitForCompletion);
@@ -74,11 +71,11 @@ public:
   }
   void move_To_Pos(int x, int y, bool horizontalFirst = true) {
     if (horizontalFirst) {
-      move_To_Vorizontal_Pos(x, true);
+      move_To_Horizontal_Pos(x, true);
       move_To_Vertical_Pos(y, true);
     } else {
       move_To_Vertical_Pos(y, true);
-      move_To_Vorizontal_Pos(x, true);
+      move_To_Horizontal_Pos(x, true);
     }
   }
   void move_To_Pos_PYTHAG(int x, int y) {
@@ -88,6 +85,13 @@ public:
     float angle = atan2(deltay, deltax);
     turn_To_Angle(angle, true);
     drive_For(distance, _driveVelocity, true);
+  }
+  void test(int x) {
+    int deltax = x - _x;
+    int deltaAngle = 90 - _angle;
+    _drivetrain.turn_Pivot_For(deltaAngle);
+    pros::delay(10000);
+    _drivetrain.drive_For(deltax);
   }
 
   bool isBusy() const { return _isBusy; }

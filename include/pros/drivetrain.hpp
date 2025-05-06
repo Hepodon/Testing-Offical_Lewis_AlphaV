@@ -40,14 +40,13 @@ public:
 
     float motorDegrees =
         (360 * (inches / (_wheeldiameter * M_PI))) * _gearratio;
-
-    _leftStart = _left.get_position();
-    _rightStart = _right.get_position();
     _driveTarget = motorDegrees;
     _isDriving = true;
+    _leftStart = _left.get_position();
+    _rightStart = _right.get_position();
 
     _left.move_relative(motorDegrees, velocity);
-    _right.move_relative(motorDegrees, velocity);
+    _right.move_relative(motorDegrees, -velocity);
 
     if (waitForCompletion) {
       while (_isDriving)
@@ -81,7 +80,7 @@ public:
     _isTurning = true;
 
     _left.move_relative(motorDegrees, _turnVelocity);
-    _right.move_relative(-motorDegrees, _turnVelocity);
+    _right.move_relative(motorDegrees, -_turnVelocity);
 
     if (waitForCompletion) {
       while (_isTurning)
