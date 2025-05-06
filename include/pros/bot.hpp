@@ -85,7 +85,7 @@ public:
     int deltax = _x - x;
     int deltay = _y - y;
     float distance = sqrt(pow(deltax, 2) + pow(deltay, 2));
-    float angle = atan2(deltay, deltax) * (180 / M_PI);
+    float angle = atan2(deltay, deltax);
     turn_To_Angle(angle, true);
     drive_For(distance, _driveVelocity, true);
   }
