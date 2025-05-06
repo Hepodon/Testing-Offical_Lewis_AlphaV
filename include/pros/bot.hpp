@@ -45,25 +45,25 @@ public:
   }
 
   void move_To_Horizontal_Pos(int x, bool waitForCompletion = true) {
+    if (x == _x) {
+      return;
+    }
     int deltax = x - _x;
-    _x += deltax;
-    int deltaAngle = ((deltax > x) ? 90 : -90) - _angle;
+    int deltaAngle = ((x > _x) ? 90 : -90) - _angle;
     turn_Pivot_For(deltaAngle, true);
     pros::delay(150);
-    drive_For(((deltax > x) ? deltax : -deltax), 0, waitForCompletion);
+    drive_For(fabs(deltax), 0, waitForCompletion);
+    _x += deltax;
   }
   void move_To_Vertical_Pos(int y, bool waitForCompletion = true) {
-    int deltay = _y - y;
-    if (deltay > _y) {
-      int deltaAngle = 0 - _angle;
-      turn_Pivot_For(deltaAngle, true);
-      drive_For(deltay, 0, waitForCompletion);
-    }
-    if (deltay < _y) {
-      int deltaAngle = 180 - _angle;
-      turn_Pivot_For(deltaAngle, true);
-      drive_For(deltay, _driveVelocity, waitForCompletion);
-    }
+    if (y == _y)
+      return;
+    int deltay = y - _y;
+    int deltaAngle = ((y > _y) ? 0 : 180) - _angle;
+    turn_Pivot_For(deltaAngle, true);
+    pros::delay(150);
+    drive_For(fabs(deltay), 0, waitForCompletion);
+    _y += deltay;
   }
   void move_To_Pos(int x, int y, bool horizontalFirst = true) {
     if (horizontalFirst) {

@@ -18,10 +18,12 @@ void competition_initialize() {}
 void autonomous() {}
 
 void opcontrol() {
-  botton.move_To_Horizontal_Pos(-12, true);
-  botton.move_To_Horizontal_Pos(12, true);
+  // botton.move_To_Horizontal_Pos(-12, true);
+  // botton.move_To_Vertical_Pos(12);
+  // botton.move_To_Horizontal_Pos(12, true);
   // botton.move_To_Horizontal_Pos(12, true);
   // // Drivetrain.turn_Pivot_For(90);
   // botton.test(15);
   // Drivetrain.drive_For(12);
+  botton.move_To_Pos_PYTHAG(48, -56);
 }
