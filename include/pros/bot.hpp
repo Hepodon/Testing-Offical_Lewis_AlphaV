@@ -33,11 +33,6 @@ public:
     _drivetrain.turn_Pivot_For(angle, true);
   }
 
-  void turn_To_Angle(int angle, bool waitForCompletion = true) {
-    int delta = angle - _angle;
-    turn_Pivot_For(delta, waitForCompletion);
-  }
-
   void definePosition(int x, int y, int angle) {
     _x = x;
     _y = y;
@@ -74,13 +69,21 @@ public:
       move_To_Horizontal_Pos(x, true);
     }
   }
-  void move_To_Pos_PYTHAG(int x, int y) {
+  void move_To_Pos_PYTHAG(int x, int y, bool waitForCompletion = true) {
+    if (x == _x || y == _y) {
+      return;
+    }
     int deltax = _x - x;
     int deltay = _y - y;
-    float distance = sqrt(pow(deltax, 2) + pow(deltay, 2));
-    float angle = atan2(deltay, deltax);
-    turn_To_Angle(angle, true);
-    drive_For(distance, _driveVelocity, true);
+
+    int distance = sqrt(pow(deltax, 2) + pow(deltay, 2));
+    int angle = atan2(deltay, deltax) * 180 / M_PI;
+
+    int deltaAngle = angle - _angle;
+
+    turn_Pivot_For(deltaAngle);
+    pros::delay(150);
+    drive_For(distance, 0, waitForCompletion);
   }
 
   bool isBusy() const { return _isBusy; }

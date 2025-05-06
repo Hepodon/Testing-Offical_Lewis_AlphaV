@@ -33,6 +33,7 @@ public:
 
   int get_wheelDiameter() { return _wheeldiameter; }
   int get_gearRatio() { return _gearratio; }
+  int get_wheelBaseWidth() { return _wheelbasewidth; }
 
   void drive_For(int inches, int velocity = 0, bool waitForCompletion = true) {
     if (velocity == 0)
