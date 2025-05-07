@@ -18,4 +18,4 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() { botton.move_To_Pos_PYTHAG(48, -56); }
+void opcontrol() { botton.turnToAnglePID(90); }

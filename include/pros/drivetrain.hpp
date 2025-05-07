@@ -88,6 +88,15 @@ public:
         pros::delay(10);
     }
   }
+  void left_Drive(int output) {
+    _left.move(output);
+  }
+  void right_Drive(int output) {
+    _right.move(output);
+  }
+
+  int get_Position_Left() const { return _left.get_position() * _gearratio; }
+  int get_Position_Right() const { return _right.get_position() * _gearratio; }
 
   bool isBusy() const { return _isDriving || _isTurning; }
 
