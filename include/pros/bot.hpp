@@ -1,6 +1,7 @@
 #include "math.h"
 #include "pros/drivetrain.hpp"
 #include "pros/rtos.hpp"
+#include <iostream>
 
 class Bot {
 public:
@@ -27,30 +28,10 @@ public:
       waitUntilComplete();
   }
 
-  void turn_Pivot_For(int angle, bool waitForCompletion = true) {
-    _angle += angle;
-    if (waitForCompletion) {
-      turnToAnglePID(_angle);
-    } else {
-      targetAngle = _angle;
-      pidEnabled = true;
-    }
-  }
-
   void turnToAnglePID(int angleTarget) {
     pidEnabled = true;
     targetAngle = angleTarget;
     _isBusy = true;
-
-    while (fabs(pidError) > 2.0) { // 2 tolerance
-      pros::delay(20);
-    }
-
-    _drivetrain.brake();
-    _drivetrain.brake();
-
-    pidEnabled = false;
-    _isBusy = false;
   }
 
   void definePosition(int x, int y, int angle) {
@@ -64,8 +45,8 @@ public:
     if (x == _x)
       return;
     int deltax = x - _x;
-    int deltaAngle = ((x > _x) ? 90 : -90) - _angle;
-    turn_Pivot_For(deltaAngle, true);
+    int deltaAngle = ((x > _x) ? 90 : -90);
+    turnToAnglePID(deltaAngle);
     pros::delay(150);
     drive_For(fabs(deltax), 0, waitForCompletion);
     _x += deltax;
@@ -75,8 +56,8 @@ public:
     if (y == _y)
       return;
     int deltay = y - _y;
-    int deltaAngle = ((y > _y) ? 0 : 180) - _angle;
-    turn_Pivot_For(deltaAngle, true);
+    int deltaAngle = ((y > _y) ? 0 : 180);
+    turnToAnglePID(deltaAngle);
     pros::delay(150);
     drive_For(fabs(deltay), 0, waitForCompletion);
     _y += deltay;
@@ -101,9 +82,8 @@ public:
 
     int distance = sqrt(pow(deltax, 2) + pow(deltay, 2));
     int angle = atan2(deltay, deltax) * 180 / M_PI;
+    turnToAnglePID(angle);
 
-    int deltaAngle = angle - _angle;
-    turn_Pivot_For(deltaAngle);
     pros::delay(150);
     drive_For(distance, 0, waitForCompletion);
 
@@ -186,52 +166,6 @@ private:
       pros::delay(10);
   }
 
-  void updateRotation() {
-    double left = _drivetrain.get_Position_Left();
-    double right = _drivetrain.get_Position_Right();
-
-    double deltaLeft = left - lastLeft;
-    double deltaRight = right - lastRight;
-
-    lastLeft = left;
-    lastRight = right;
-
-    double leftDistance = (deltaLeft / 360.0) *
-                          (M_PI * _drivetrain.get_wheelDiameter()) *
-                          _drivetrain.get_gearRatio();
-    double rightDistance = (deltaRight / 360.0) *
-                           (M_PI * _drivetrain.get_wheelDiameter()) *
-                           _drivetrain.get_gearRatio();
-
-    double deltaTheta =
-        (rightDistance - leftDistance) / _drivetrain.get_wheelBaseWidth();
-    currentAngle += deltaTheta * (180.0 / M_PI);
-
-    if (currentAngle >= 360)
-      currentAngle -= 360;
-    if (currentAngle < 0)
-      currentAngle += 360;
-  }
-
-  void updateAnglePID() {
-    pidError = targetAngle - currentAngle;
-
-    if (pidError > 180)
-      pidError -= 360;
-    if (pidError < -180)
-      pidError += 360;
-
-    pidIntegral += pidError;
-    double derivative = pidError - pidLastError;
-    pidLastError = pidError;
-
-    double output = kP * pidError + kI * pidIntegral + kD * derivative;
-    output = std::clamp(output, -100.0, 100.0);
-
-    _drivetrain.left_Drive(-output);
-    _drivetrain.right_Drive(output);
-  }
-
   static void botLoopWrapper(void *ptr) { static_cast<Bot *>(ptr)->botLoop(); }
   static void dumpTaskWrapper(void *ptr) {
     static_cast<Bot *>(ptr)->dumpTask();
@@ -242,9 +176,45 @@ private:
 
   void botLoop() {
     while (true) {
-      updateRotation();
-      if (pidEnabled)
-        updateAnglePID();
+      double left = _drivetrain.get_Position_Left();
+      double right = _drivetrain.get_Position_Right();
+
+      double deltaLeft = left - lastLeft;
+      double deltaRight = -(right - lastRight);
+
+      lastLeft = left;
+      lastRight = right;
+
+      double leftDistance = (deltaLeft / 360.0) *
+                            (M_PI * _drivetrain.get_wheelDiameter()) *
+                            _drivetrain.get_gearRatio();
+      double rightDistance = (deltaRight / 360.0) *
+                             (M_PI * _drivetrain.get_wheelDiameter()) *
+                             _drivetrain.get_gearRatio();
+
+      double deltaTheta =
+          (rightDistance - leftDistance) / _drivetrain.get_wheelBaseWidth();
+      currentAngle += deltaTheta * (180.0 / M_PI);
+
+      if (pidEnabled) {
+        double kP = 0.6, kI = 0, kD = 0.05;
+        double error = targetAngle, derivative = 0, integral = 0,
+               prevError = error;
+        double input, output;
+
+        while (true) {
+          double input = currentAngle;
+
+          error = targetAngle - input;
+          derivative = error - prevError;
+          integral += error;
+
+          double output = error * kP + integral * kI + derivative * kD;
+
+          _drivetrain.left_Drive(output);
+          _drivetrain.right_Drive(-output);
+        }
+      }
       pros::delay(20);
     }
   }
