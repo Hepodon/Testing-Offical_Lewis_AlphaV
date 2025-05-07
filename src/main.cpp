@@ -4,7 +4,7 @@
 using namespace pros;
 Drivetrain Drivetrain({20}, {-19}, 1, 10, 4);
 
-Bot botton(Drivetrain, 21, 18);
+Bot botton(Drivetrain, 18, 21);
 
 void initialize() {
   delay(250);
@@ -18,4 +18,4 @@ void competition_initialize() {}
 
 void autonomous() {}
 
-void opcontrol() { botton.turnToAnglePID(90); }
+void opcontrol() { botton.turn_Pivot_For(90); }

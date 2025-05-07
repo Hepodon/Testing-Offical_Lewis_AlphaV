@@ -142,7 +142,7 @@ public:
   double lastLeft = 0;
   double lastRight = 0;
 
-  bool pidEnabled = false;
+  bool pidEnabled = true;
 
 private:
   Drivetrain &_drivetrain;
@@ -232,13 +232,12 @@ private:
     _drivetrain.right_Drive(output);
   }
 
-  int botLoop() {
+  void botLoop() {
     while (true) {
       updateRotation();
-      if (pidEnabled && !_isBusy)
+      if (pidEnabled)
         updateAnglePID();
       pros::delay(20);
     }
-    return 0;
   }
 };
