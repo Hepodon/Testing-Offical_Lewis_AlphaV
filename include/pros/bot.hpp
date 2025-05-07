@@ -2,6 +2,8 @@
 #include "pros/drivetrain.hpp"
 #include "pros/rtos.hpp"
 
+// Graph for auton planning can be found at: https://www.desmos.com/calculator/cmdq5qeife
+
 class Bot {
 public:
   Bot(Drivetrain &drivetrain, int chainPort, int dumpPort, int chainSpeed = 100)
