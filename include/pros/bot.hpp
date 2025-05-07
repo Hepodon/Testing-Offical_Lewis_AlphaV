@@ -46,8 +46,8 @@ public:
       pros::delay(20);
     }
 
-    _drivetrain.left_Drive(0);
-    _drivetrain.right_Drive(0);
+    _drivetrain.brake();
+    _drivetrain.brake();
 
     pidEnabled = false;
     _isBusy = false;

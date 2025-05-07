@@ -71,6 +71,10 @@ public:
     _left.move(-_turnVelocity);
     _right.move(_turnVelocity);
   }
+  void brake() {
+    _left.brake();
+    _right.brake();
+  }
 
   void turn_Pivot_For(int turnDegrees, bool waitForCompletion = true) {
     float motorDegrees = (_wheelbasewidth * turnDegrees) / _wheeldiameter;
@@ -88,12 +92,8 @@ public:
         pros::delay(10);
     }
   }
-  void left_Drive(int output) {
-    _left.move(output);
-  }
-  void right_Drive(int output) {
-    _right.move(output);
-  }
+  void left_Drive(int output) { _left.move(output); }
+  void right_Drive(int output) { _right.move(output); }
 
   int get_Position_Left() const { return _left.get_position() * _gearratio; }
   int get_Position_Right() const { return _right.get_position() * _gearratio; }
