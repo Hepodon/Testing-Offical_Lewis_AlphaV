@@ -6,7 +6,8 @@ class Bot {
 public:
   Bot(Drivetrain &drivetrain, int chainPort, int dumpPort, int chainSpeed = 100)
       : _drivetrain(drivetrain), _chain(chainPort), _dump(dumpPort),
-        _chainspeed(chainSpeed), _monitorTask([this] { monitorTask(); }) {}
+        _chainspeed(chainSpeed), _monitorTask([this] { monitorTask(); }),
+        _dumpTask([this] { dumpTask(); }) {}
 
   void set_Velocity_Drive(int velocity) { _driveVelocity = velocity; }
 
@@ -83,6 +84,19 @@ public:
     drive_For(distance, _driveVelocity, true);
   }
 
+  void chain_Disable() { _chain.brake(); }
+  void chain_Active(bool forwards, int speed = 0) {
+    speed = fabs(speed);
+    speed = (speed == 0 ? _chainspeed : speed);
+    if (forwards) {
+      _chain.move(speed);
+    } else {
+      _chain.move(-speed);
+    }
+  }
+
+  void dump(bool active = false) { _dumpActive = active; }
+
   bool isBusy() const { return _isBusy; }
 
 private:
@@ -96,7 +110,22 @@ private:
   int _turnVelocity = 35;
   int _driveVelocity = 55;
   bool _isBusy = false;
+  bool _dumpActive = false;
   pros::Task _monitorTask;
+  pros::Task _dumpTask;
+
+  void dumpTask() {
+    while (true) {
+      if (_dumpActive) {
+        _dump.move(-72);
+        pros::delay(1500);
+        _dumpActive = false;
+      } else {
+        _dump.move(20);
+      }
+      pros::delay(50);
+    }
+  }
 
   void monitorTask() {
     while (true) {
