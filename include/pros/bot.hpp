@@ -6,8 +6,8 @@ class Bot {
 public:
   Bot(Drivetrain &drivetrain, int chainPort, int dumpPort, int chainSpeed = 100)
       : _drivetrain(drivetrain), _chain(chainPort), _dump(dumpPort),
-        _chainspeed(chainSpeed), _monitorTask([this] { monitorTask(); }),
-        _dumpTask([this] { dumpTask(); }), _botTask([this] { botLoop(); }) {}
+        _chainspeed(chainSpeed), _monitorTask(monitortaskWrapper, this),
+        _dumpTask(dumpTaskWrapper, this), _botTask(botLoopWrapper, this) {}
 
   void set_Velocity_Drive(int velocity) { _driveVelocity = velocity; }
   void set_Velocity_Turn(int velocity) { _turnVelocity = velocity; }
@@ -142,7 +142,7 @@ public:
   double lastLeft = 0;
   double lastRight = 0;
 
-  bool pidEnabled = true;
+  bool pidEnabled = false;
 
 private:
   Drivetrain &_drivetrain;
@@ -230,6 +230,14 @@ private:
 
     _drivetrain.left_Drive(-output);
     _drivetrain.right_Drive(output);
+  }
+
+  static void botLoopWrapper(void *ptr) { static_cast<Bot *>(ptr)->botLoop(); }
+  static void dumpTaskWrapper(void *ptr) {
+    static_cast<Bot *>(ptr)->dumpTask();
+  }
+  static void monitortaskWrapper(void *ptr) {
+    static_cast<Bot *>(ptr)->monitorTask();
   }
 
   void botLoop() {
