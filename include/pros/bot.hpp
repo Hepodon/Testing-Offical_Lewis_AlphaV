@@ -1,7 +1,6 @@
 #include "math.h"
 #include "pros/drivetrain.hpp"
 #include "pros/rtos.hpp"
-#include <iostream>
 
 class Bot {
 public:
@@ -31,7 +30,31 @@ public:
   void turnToAnglePID(int angleTarget) {
     pidEnabled = true;
     targetAngle = angleTarget;
+    double error = targetAngle, derivative = 0, integral = 0, prevError = error;
     _isBusy = true;
+
+    while (true) {
+      double input = currentAngle;
+
+      error = targetAngle - input;
+      derivative = error - prevError;
+      integral += error;
+
+      double output = error * kP + integral * kI + derivative * kD;
+
+      if (fabs(error) < 1) {
+        _drivetrain.brake();
+        _isBusy = false;
+        pidEnabled = false;
+        break;
+      }
+
+      _drivetrain.left_Drive(output);
+      _drivetrain.right_Drive(-output);
+
+      prevError = error;
+      pros::delay(10);
+    }
   }
 
   void definePosition(int x, int y, int angle) {
@@ -111,13 +134,8 @@ public:
   double currentAngle = 0;
   double targetAngle = 0;
 
-  double kP = 0.6;
-  double kI = 0.0;
-  double kD = 0.05;
-
-  double pidError = 0;
-  double pidIntegral = 0;
-  double pidLastError = 0;
+  double kP = 0.6, kI = 0, kD = 0.05;
+  double input, output;
 
   double lastLeft = 0;
   double lastRight = 0;
@@ -180,7 +198,10 @@ private:
       double right = _drivetrain.get_Position_Right();
 
       double deltaLeft = left - lastLeft;
-      double deltaRight = -(right - lastRight);
+      double deltaRight = right - lastRight;
+      currentAngle = fmod(currentAngle, 360.0);
+      if (currentAngle < 0)
+        currentAngle += 360.0;
 
       lastLeft = left;
       lastRight = right;
@@ -195,26 +216,6 @@ private:
       double deltaTheta =
           (rightDistance - leftDistance) / _drivetrain.get_wheelBaseWidth();
       currentAngle += deltaTheta * (180.0 / M_PI);
-
-      if (pidEnabled) {
-        double kP = 0.6, kI = 0, kD = 0.05;
-        double error = targetAngle, derivative = 0, integral = 0,
-               prevError = error;
-        double input, output;
-
-        while (true) {
-          double input = currentAngle;
-
-          error = targetAngle - input;
-          derivative = error - prevError;
-          integral += error;
-
-          double output = error * kP + integral * kI + derivative * kD;
-
-          _drivetrain.left_Drive(output);
-          _drivetrain.right_Drive(-output);
-        }
-      }
       pros::delay(20);
     }
   }
