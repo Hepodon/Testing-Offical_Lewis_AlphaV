@@ -33,6 +33,10 @@ public:
     double error = targetAngle, derivative = 0, integral = 0, prevError = error;
     _isBusy = true;
 
+    int timeout = 3000;
+    int elapsedTime = 0;
+    double maxIntegral = 100;
+
     while (true) {
       double input = currentAngle;
 
@@ -40,9 +44,13 @@ public:
       derivative = error - prevError;
       integral += error;
 
+      if (fabs(integral) > maxIntegral) {
+        integral = (integral > 0) ? maxIntegral : -maxIntegral;
+      }
+
       double output = error * kP + integral * kI + derivative * kD;
 
-      if (fabs(error) < 1) {
+      if (fabs(error) < 1 || elapsedTime >= timeout) {
         _drivetrain.brake();
         _isBusy = false;
         pidEnabled = false;
@@ -54,6 +62,7 @@ public:
 
       prevError = error;
       pros::delay(10);
+      elapsedTime += 10;
     }
   }
 
@@ -129,12 +138,11 @@ public:
 
   bool isBusy() const { return _isBusy; }
 
-  // === PID-related members ===
   double totalMotorDegrees = 0;
   double currentAngle = 0;
   double targetAngle = 0;
 
-  double kP = 0.6, kI = 0, kD = 0.05;
+  double kP = 0.64, kI = 0.003, kD = 0.38;
   double input, output;
 
   double lastLeft = 0;
