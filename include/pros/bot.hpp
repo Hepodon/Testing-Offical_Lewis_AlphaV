@@ -1,5 +1,6 @@
 #include "math.h"
 #include "pros/drivetrain.hpp"
+#include "pros/imu.hpp"
 #include "pros/rtos.hpp"
 
 class Bot {
@@ -50,19 +51,19 @@ public:
 
       double output = error * kP + integral * kI + derivative * kD;
 
-      if (fabs(error) < 1 || elapsedTime >= timeout) {
-        _drivetrain.brake();
-        _isBusy = false;
-        pidEnabled = false;
-        break;
-      }
+      // if (fabs(error) < 1 || elapsedTime >= timeout) {
+      //   _drivetrain.brake();
+      //   _isBusy = false;
+      //   pidEnabled = false;
+      //   break;
+      // }
 
       _drivetrain.left_Drive(output);
       _drivetrain.right_Drive(-output);
 
       prevError = error;
       pros::delay(10);
-      elapsedTime += 10;
+      // elapsedTime += 10;
     }
   }
 
@@ -142,7 +143,7 @@ public:
   double currentAngle = 0;
   double targetAngle = 0;
 
-  double kP = 0.64, kI = 0.003, kD = 0.38;
+  double kP = 1, kI = 0, kD = 0;
   double input, output;
 
   double lastLeft = 0;
@@ -154,6 +155,7 @@ private:
   Drivetrain &_drivetrain;
   pros::Motor _chain;
   pros::Motor _dump;
+  pros::Imu inertial{11};
   int _x = 0;
   int _y = 0;
   int _angle = 0;
